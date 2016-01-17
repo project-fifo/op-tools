@@ -68,6 +68,8 @@ cat $CERTDIR/$CERTPREFIX.key $CERTDIR/$CERTPREFIX.crt > $CERTDIR/$CERTPREFIX.pem
 
 
 # Config Snarl
+$SED -i "" '/ssl.ca_cert/s/^## //g' $SNARLCONF
+$SED -i "" '/ssl.ca_key/s/^## //g' $SNARLCONF
 $SED -i -e '/ssl.ca_cert =/ s|= .*|= '$CERTDIR'/'$CERTPREFIX'-ca.pem|' $SNARLCONF
 $SED -i -e '/ssl.ca_key =/ s|= .*|= '$CERTDIR'/'$CERTPREFIX'-ca.key|' $SNARLCONF
 
