@@ -2,6 +2,7 @@
 
 AWK=/usr/bin/awk
 SED=/usr/bin/sed
+GREP=/opt/local/bin/grep
 CERTDIR="/var/db/fifo"
 CERTPREFIX="fifo"
 DAYS=1825 # 5 years
@@ -68,10 +69,11 @@ cat $CERTDIR/$CERTPREFIX.key $CERTDIR/$CERTPREFIX.crt > $CERTDIR/$CERTPREFIX.pem
 
 
 # Config Snarl
-$SED -i "" '/ssl.ca_cert/s/^## //g' $SNARLCONF
-$SED -i "" '/ssl.ca_key/s/^## //g' $SNARLCONF
 $SED -i -e '/ssl.ca_cert =/ s|= .*|= '$CERTDIR'/'$CERTPREFIX'-ca.pem|' $SNARLCONF
 $SED -i -e '/ssl.ca_key =/ s|= .*|= '$CERTDIR'/'$CERTPREFIX'-ca.key|' $SNARLCONF
+$GREP -q -x 'ssl.ca_cert = '$CERTDIR'/'$CERTPREFIX'-ca.pem' $SNARLCONF || echo 'ssl.ca_cert = '$CERTDIR'/'$CERTPREFIX'-ca.pem' >> $SNARLCONF
+$GREP -q -x 'ssl.ca_key = '$CERTDIR'/'$CERTPREFIX'-ca.key' $SNARLCONF || echo 'ssl.ca_key = '$CERTDIR'/'$CERTPREFIX'-ca.key' >> $SNARLCONF
+
 
 # Config Kennel
 $SED -i -e '/ssl.cacertfile =/ s|= .*|= '$CERTDIR'/'$CERTPREFIX'-ca.pem|' $KENNELCONF
